@@ -1,0 +1,52 @@
+.forma {
+    display: flex;
+}
+
+form {
+    display: inline-block;
+    margin: auto;
+    padding: 10px;
+    flex-direction: row;
+    justify-content: center;
+    border: 2px solid #76504f;
+    border-radius: 15px;
+    align-items: center;
+}
+
+form input {
+    width: 150px;
+    height: 30px;
+    margin: 0 10px;
+}
+
+form label {
+    padding: 10px;
+    display: grid;
+    color: #798881;
+}
+
+h1, h2 {
+    color: #514859;
+    text-align: center;
+    padding: 20px;
+}
+
+.error {
+    color: red;
+}
+
+.nav {
+    padding: 20px;
+}
+
+.nav a {
+    color: #798881;
+}
+
+.rap-author { 
+    display: none;
+}
+
+span:hover .rap-author {
+    display: inline-block;
+}
