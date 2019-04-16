@@ -16,6 +16,7 @@ class Connection extends \Core\Database\Abstracts\Connection {
                 $this->pdo = new PDO(
                         "mysql:host=$this->host", $this->user, $this->pass
                 );
+                
                 if (DEBUG) {
                     $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
