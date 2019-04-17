@@ -17,29 +17,22 @@ $inputs = [
 
 $pdo = $db->getPDO();
 $query = $pdo->query("SELECT * FROM `my_db`.`new_table`");
-
-foreach ($inputs as $key => &$value) {
-    $query->bindParam(':' . $key, $value);
-}
 $data = $query->fetchAll(PDO::FETCH_ASSOC);
-$query->execute();
 ?>
 <html>
     <head>
         <title>Connection DB</title>
     </head>
     <body>
-        
         <?php foreach ($data as $row): ?>
             <ul>
                 
-                <?php foreach ($row as $value): ?>
-                    <li><?php print $value ?></li>
+                <?php foreach ($row as $col): ?>
+                    <li><?php print $col ?></li>
                 <?php endforeach; ?>
                     
             </ul>
         <?php endforeach; ?>
-        
     </body>
 </html>
 
