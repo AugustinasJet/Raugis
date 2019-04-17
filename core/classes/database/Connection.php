@@ -7,6 +7,7 @@ use PDO;
 class Connection extends \Core\Database\Abstracts\Connection {
 
     public function __construct($creds) {
+        $this->pdo = null;
         $this->setCredentials($creds);
     }
 
