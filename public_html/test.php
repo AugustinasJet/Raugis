@@ -17,20 +17,37 @@ $inputs = [
 
 $pdo = $db->getPDO();
 $query = $pdo->query("SELECT * FROM `my_db`.`new_table`");
-$data = $query->fetchAll(PDO::FETCH_ASSOC);
+$objects = [];
+$last_gender = '';
+
+while ($data = $query->fetch(PDO::FETCH_LAZY)) {
+    $gender = $data['gender']; // Requestas i duombaze
+    if ($gender == $last_gender && $gender == 'f') {
+        break;
+    } else {
+        $last_gender = $gender;
+        $objects[] = [
+            'full_name' => $data['full_name'],
+            'age' => $data['age'],
+            'email' => $data['email'],
+            'gender' => $data['gender'],
+            'photo' => $data['photo']
+        ];
+    }
+}
 ?>
 <html>
     <head>
         <title>Connection DB</title>
     </head>
     <body>
-        <?php foreach ($data as $row): ?>
+        <?php foreach ($objects as $row): ?>
             <ul>
-                
-                <?php foreach ($row as $col): ?>
-                    <li><?php print $col ?></li>
-                <?php endforeach; ?>
-                    
+                <li><?php print $row['email'] ?></li>
+                <li><?php print $row['full_name'] ?></li>
+                <li><?php print $row['age'] ?></li>
+                <li><?php print $row['gender'] ?></li>
+                <li><?php print $row['photo'] ?></li>
             </ul>
         <?php endforeach; ?>
     </body>
