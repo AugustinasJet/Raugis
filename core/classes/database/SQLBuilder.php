@@ -12,7 +12,8 @@ class SQLBuilder extends Core\Database\Abstracts\SQLBuilder {
         foreach ($column_array as $column) {
             $arr[] = self::bind($column);
         }
-        return implode(',', $column_array);
+        
+        return implode(', ', $column_array);
     }
 
     public static function column($column): string {
@@ -27,13 +28,15 @@ class SQLBuilder extends Core\Database\Abstracts\SQLBuilder {
         foreach ($column_array as $value) {
             $arr[] = '`' . $value . '`,';
         }
-        return implode(',', $arr);
+        
+        return implode(', ', $arr);
     }
 
     public static function columnsEqualBinds($column_array, $delimiter = ', '): string {
         foreach ($column_array as $column) {
             $arr []= self::columnEqualBind($column) . $delimiter;
         }
+        
         return implode($delimiter, $arr);
     }
 
@@ -45,7 +48,8 @@ class SQLBuilder extends Core\Database\Abstracts\SQLBuilder {
         foreach ($value_array as $value) {
             $arr[] = self::value($value);
         }
-        return implode(',', $arr);
+        
+        return implode(', ', $arr);
     }
 
 }
