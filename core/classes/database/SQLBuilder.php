@@ -13,7 +13,7 @@ class SQLBuilder extends Core\Database\Abstracts\SQLBuilder {
             $arr[] = self::bind($column);
         }
         
-        return implode(', ', $column_array);
+        return implode(', ', $arr);
     }
 
     public static function column($column): string {
