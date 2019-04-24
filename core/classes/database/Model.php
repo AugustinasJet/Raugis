@@ -62,7 +62,7 @@ class Model extends Core\Database\Abstracts\Model {
 
     public function insertIfNotExists($row, $unique_columns) {
         if (!$this->load($unique_columns)) {
-            $this->insert($row);
+            return $this->insert($row);
         }
     }
 
