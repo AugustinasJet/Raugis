@@ -61,9 +61,14 @@ class Model extends Core\Database\Abstracts\Model {
     }
 
     public function insertIfNotExists($row, $unique_columns) {
-        if (!$this->load($unique_columns)) {
+        $loadConditions = [];
+        foreach ($unique_columns as $column) {
+            $loadConditions[$column] = $row[$column];
+        }
+        if (!$this->load($load_conditions)) {
             return $this->insert($row);
         }
+        return false; 
     }
 
     public function update($row = array(), $conditions = array()) {
