@@ -61,8 +61,8 @@ class Model extends Core\Database\Abstracts\Model {
     }
 
     public function insertIfNotExists($row, $unique_columns) {
-        foreach ($unique_columns as $column) {
-            if ($row[$column])
+        if (!$this->load($unique_columns)) {
+            $this->insert($row);
         }
     }
 
@@ -70,11 +70,19 @@ class Model extends Core\Database\Abstracts\Model {
         $row_keys = array_keys($row);
         $conditions_keys = array_keys($conditions);
 
-        $sql = strtr('UPDATE @table SET @values WHERE @condition', [
-            '@table' => SQLBuilder::table($this->table_name),
-            '@values' => SQLBuilder::columnsEqualBinds($row_keys),
-            '@condition' => SQLBuilder::columnsEqualBinds($conditions_keys, ' AND ')
-        ]);
+        if ($conditions) {
+            $sql = strtr('UPDATE @table SET @values WHERE @condition', [
+                '@table' => SQLBuilder::table($this->table_name),
+                '@values' => SQLBuilder::columnsEqualBinds($row_keys),
+                '@condition' => SQLBuilder::columnsEqualBinds($conditions_keys, ' AND ', 'cond_')
+            ]);
+        } else {
+            $sql = strtr('UPDATE @table SET @values', [
+                '@table' => SQLBuilder::table($this->table_name),
+                '@values' => SQLBuilder::columnsEqualBinds($row_keys)
+            ]);
+        }
+
 
         $query = $this->pdo->prepare($sql);
 
@@ -82,7 +90,7 @@ class Model extends Core\Database\Abstracts\Model {
             $query->bindValue(SQLBuilder::bind($column), $value);
         }
         foreach ($conditions as $column => $value) {
-            $query->bindValue(SQLBuilder::bind($column), $value);
+            $query->bindValue(SQLBuilder::bind($column, 'cond_'), $value);
         }
 
         try {
