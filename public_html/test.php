@@ -1,55 +1,42 @@
 <?php
 require_once '../bootloader.php';
 
+use Core\Database\SQLBuilder;
+
 $db = new \Core\Database\Connection([
     'host' => 'localhost',
     'user' => 'root',
-    'password' => '123456'
+    'password' => '12345'
         ]);
-$inputs = [
-    'email' => 'a@aasd.lt',
-    'password' => 'pass',
-    'full_name' => 'Jonas Paulius',
-    'age' => 55,
-    'gender' => 'm',
-    'photo' => 'as.jpg'
-];
 
 $pdo = $db->getPDO();
-$query = $pdo->query("SELECT * FROM `my_db`.`new_table`");
-$objects = [];
-$last_gender = '';
 
-while ($data = $query->fetch(PDO::FETCH_LAZY)) {
-    $gender = $data['gender']; // Requestas i duombaze
-    if ($gender == $last_gender && $gender == 'f') {
-        break;
-    } else {
-        $last_gender = $gender;
-        $objects[] = [
-            'full_name' => $data['full_name'],
-            'age' => $data['age'],
-            'email' => $data['email'],
-            'gender' => $data['gender'],
-            'photo' => $data['photo']
-        ];
-    }
+$row = [
+    'email' => 'fokacija2334@gmail.com',
+    'password' => '123456444',
+    'full_name' => 'Augis Raugis9000',
+    'gender' => 'm',
+    'age' => 24,
+    'photo' => 'augis2.jpg'
+];
+
+$columns = array_keys($row);
+
+$sql = strtr("CREATE DATABASE `new_shema_name`;"
+        . "CREATE USER '@user'@'@host' IDENTIFIED BY '@pass';"
+        . "GRANT ALL ON `new_shema_name`.* TO '@user'@'@host';"
+        . "FLUSH PRIVILEGES;", [
+            '@user' => SQLBuilder::schema('my_db'),
+            '@host' => SQLBuilder::table('users'),
+            '@columns' => SQLBuilder::columns($columns),
+            '@values' => SQLBuilder::binds($columns),
+            
+        ]);
+
+$query = $pdo->prepare($sql);
+
+foreach($row as $key => &$value) {
+    $query->bindValue(SQLBuilder::bind($key), $value);
 }
-?>
-<html>
-    <head>
-        <title>Connection DB</title>
-    </head>
-    <body>
-        <?php foreach ($objects as $row): ?>
-            <ul>
-                <li><?php print $row['email'] ?></li>
-                <li><?php print $row['full_name'] ?></li>
-                <li><?php print $row['age'] ?></li>
-                <li><?php print $row['gender'] ?></li>
-                <li><?php print $row['photo'] ?></li>
-            </ul>
-        <?php endforeach; ?>
-    </body>
-</html>
 
+$query->execute();
