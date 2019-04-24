@@ -42,40 +42,54 @@ class Model extends Core\Database\Abstracts\Model {
         $columns = array_keys($row);
 
         $sql = strtr('INSERT INTO @table (@columns) VALUES (@values)', [
-        '@table' => SQLBuilder::table($this->table_name),
-        '@columns' => SQLBuilder::columns($columns),
-        '@values' => SQLBuilder::binds($columns)
+            '@table' => SQLBuilder::table($this->table_name),
+            '@columns' => SQLBuilder::columns($columns),
+            '@values' => SQLBuilder::binds($columns)
         ]);
-        
+
         $query = $this->pdo->prepare($sql);
-        
+
         foreach ($row as $column => $value)
-        $query->bindValue(SQLBuilder::bind ($column), $value);
-                
+            $query->bindValue(SQLBuilder::bind($column), $value);
+
         try {
-        $query->execute();
-        return $this->pdo->lastInsertId();
+            $query->execute();
+            return $this->pdo->lastInsertId();
         } catch (PDOException $e) {
             throw new Exception('Nepavyko insertinti eilutes');
         }
     }
 
     public function insertIfNotExists($row, $unique_columns) {
-        
+        foreach ($unique_columns as $column) {
+            if ($row[$column])
+        }
     }
 
     public function update($row = array(), $conditions = array()) {
         $row_keys = array_keys($row);
         $conditions_keys = array_keys($conditions);
-        
+
         $sql = strtr('UPDATE @table SET @values WHERE @condition', [
-        '@table' => SQLBuilder::table($this->table_name),
-        '@values' => SQLBuilder::columnEqualBinds($conditions_keys),
-        '@condition' => SQLBuilder::columnEqualBinds($condition, 'AND')
+            '@table' => SQLBuilder::table($this->table_name),
+            '@values' => SQLBuilder::columnsEqualBinds($row_keys),
+            '@condition' => SQLBuilder::columnsEqualBinds($conditions_keys, ' AND ')
         ]);
-        
+
         $query = $this->pdo->prepare($sql);
-        
+
+        foreach ($row as $column => $value) {
+            $query->bindValue(SQLBuilder::bind($column), $value);
+        }
+        foreach ($conditions as $column => $value) {
+            $query->bindValue(SQLBuilder::bind($column), $value);
+        }
+
+        try {
+            return $query->execute();
+        } catch (PDOException $ex) {
+            throw new Exception('Database error: Unable to update table ' . $ex->getMessage());
+        }
     }
 
 }
